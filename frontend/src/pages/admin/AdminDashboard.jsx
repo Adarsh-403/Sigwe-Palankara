@@ -23,7 +23,7 @@ export default function AdminDashboard() {
 
   const fetchAnalytics = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/analytics/summary');
+      const res = await axios.get('/api/analytics/summary');
       setAnalytics(res.data);
     } catch (error) {
       console.error('Error fetching analytics:', error);
@@ -37,7 +37,7 @@ export default function AdminDashboard() {
     if (!confirmed) return;
 
     try {
-      await axios.delete('http://localhost:5000/api/analytics/clear');
+      await axios.delete('/api/analytics/clear');
       alert("All data has been successfully cleared. Starting fresh.");
       fetchAnalytics();
     } catch (error) {

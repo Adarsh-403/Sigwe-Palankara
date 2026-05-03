@@ -26,7 +26,7 @@ export default function POS() {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/products');
+      const res = await axios.get('/api/products');
       setProducts(res.data);
     } catch (error) {
       console.error('Error fetching products', error);
@@ -37,7 +37,7 @@ export default function POS() {
   const searchOrder = async () => {
     if (orderCode.length === 4) {
       try {
-        const res = await axios.get(`http://localhost:5000/api/orders/${orderCode}`);
+        const res = await axios.get(`/api/orders/${orderCode}`);
         setOrder({
           code: res.data.orderCode,
           status: res.data.status,
@@ -54,7 +54,7 @@ export default function POS() {
   const completeOnlineSale = async () => {
     if (!paymentMethod) return alert('Select payment method');
     try {
-      await axios.put(`http://localhost:5000/api/orders/${orderCode}/complete`, { paymentMethod });
+      await axios.put(`/api/orders/${orderCode}/complete`, { paymentMethod });
       setOrder({ ...order, status: 'Completed', paymentMethod });
       alert('Sale Completed! Stock has been updated.');
     } catch (error) {
@@ -100,11 +100,11 @@ export default function POS() {
         })),
         totalAmount: directTotalAmount
       };
-      const createRes = await axios.post('http://localhost:5000/api/orders', payload);
+      const createRes = await axios.post('/api/orders', payload);
       const newOrderCode = createRes.data.orderCode;
 
       // 2. Immediately mark as complete to reduce stock
-      await axios.put(`http://localhost:5000/api/orders/${newOrderCode}/complete`, { paymentMethod: directPaymentMethod });
+      await axios.put(`/api/orders/${newOrderCode}/complete`, { paymentMethod: directPaymentMethod });
       
       setCompletedDirectOrderCode(newOrderCode);
       setCart([]);

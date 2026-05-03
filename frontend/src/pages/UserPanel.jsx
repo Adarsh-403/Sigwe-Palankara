@@ -25,7 +25,7 @@ export default function UserPanel() {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/products');
+      const res = await axios.get('/api/products');
       setProducts(res.data);
     } catch (error) {
       console.error('Error fetching products', error);
@@ -70,7 +70,7 @@ export default function UserPanel() {
         })),
         totalAmount
       };
-      const res = await axios.post('http://localhost:5000/api/orders', payload);
+      const res = await axios.post('/api/orders', payload);
       setOrderComplete({ code: res.data.orderCode, items: cart, total: totalAmount });
       setCart([]);
       setIsCartOpen(false);

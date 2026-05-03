@@ -12,7 +12,7 @@ export default function OrderManagement() {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/orders');
+      const res = await axios.get('/api/orders');
       setOrders(res.data);
     } catch (error) {
       console.error('Error fetching orders:', error);

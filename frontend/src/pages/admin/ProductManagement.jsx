@@ -14,7 +14,7 @@ export default function ProductManagement() {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/products');
+      const res = await axios.get('/api/products');
       setProducts(res.data);
     } catch (error) {
       console.error('Error fetching products', error);
@@ -47,9 +47,9 @@ export default function ProductManagement() {
     e.preventDefault();
     try {
       if (editingProduct) {
-        await axios.put(`http://localhost:5000/api/products/${editingProduct._id}`, formData);
+        await axios.put(`/api/products/${editingProduct._id}`, formData);
       } else {
-        await axios.post('http://localhost:5000/api/products', formData);
+        await axios.post('/api/products', formData);
       }
       fetchProducts();
       closeModal();
@@ -77,7 +77,7 @@ export default function ProductManagement() {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/products/${id}`);
+        await axios.delete(`/api/products/${id}`);
         fetchProducts();
       } catch (error) {
         console.error('Error deleting product', error);
