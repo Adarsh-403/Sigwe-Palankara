@@ -12,7 +12,7 @@ axios.defaults.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <App />
       </BrowserRouter>
     </Provider>
