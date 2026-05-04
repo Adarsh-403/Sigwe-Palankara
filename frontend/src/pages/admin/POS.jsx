@@ -17,6 +17,7 @@ export default function POS() {
  
  // Shared
  const [paymentMethod, setPaymentMethod] = useState('');
+ const [isCompleting, setIsCompleting] = useState(false);
 
  useEffect(() => {
  if (activeTab === 'direct') {
@@ -51,16 +52,23 @@ export default function POS() {
  }
  };
 
- const completeOnlineSale = async () => {
- if (!paymentMethod) return alert('Select payment method');
- try {
- await axios.put(`/api/orders/${orderCode}/complete`, { paymentMethod });
- setOrder({ ...order, status: 'Completed', paymentMethod });
- alert('Sale Completed! Stock has been updated.');
- } catch (error) {
- alert(error.response?.data?.message || 'Error completing sale');
- }
- };
+  const completeOnlineSale = async () => {
+    if (!paymentMethod) return alert('Select payment method');
+    
+    const confirm = window.confirm('Are you sure you want to complete this sale? This action will permanently deduct the items from stock.');
+    if (!confirm) return;
+
+    setIsCompleting(true);
+    try {
+      await axios.put(`/api/orders/${orderCode}/complete`, { paymentMethod });
+      setOrder({ ...order, status: 'Completed', paymentMethod });
+      alert('Sale Completed! Stock has been updated.');
+    } catch (error) {
+      alert(error.response?.data?.message || 'Error completing sale');
+    } finally {
+      setIsCompleting(false);
+    }
+  };
 
  // --- Direct Sale Logic ---
  const addToCart = (product) => {
@@ -85,36 +93,42 @@ export default function POS() {
 
  const directTotalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
- const completeDirectSale = async () => {
- if (cart.length === 0) return alert('Cart is empty');
- if (!directPaymentMethod) return alert('Select payment method');
+  const completeDirectSale = async () => {
+    if (cart.length === 0) return alert('Cart is empty');
+    if (!directPaymentMethod) return alert('Select payment method');
 
- try {
- // 1. Create the pending order
- const payload = {
- items: cart.map(c => ({
- productId: c._id,
- quantity: c.quantity,
- price: c.price,
- name: c.name
- })),
- totalAmount: directTotalAmount
- };
- const createRes = await axios.post('/api/orders', payload);
- const newOrderCode = createRes.data.orderCode;
+    const confirm = window.confirm('Are you sure you want to complete this direct sale? This will instantly generate an order and deduct the items from stock.');
+    if (!confirm) return;
 
- // 2. Immediately mark as complete to reduce stock
- await axios.put(`/api/orders/${newOrderCode}/complete`, { paymentMethod: directPaymentMethod });
- 
- setCompletedDirectOrderCode(newOrderCode);
- setCart([]);
- setDirectPaymentMethod('');
- fetchProducts(); // refresh stock
- } catch (error) {
- console.error(error);
- alert('Error completing direct sale');
- }
- };
+    setIsCompleting(true);
+    try {
+      // 1. Create the pending order
+      const payload = {
+        items: cart.map(c => ({
+          productId: c._id,
+          quantity: c.quantity,
+          price: c.price,
+          name: c.name
+        })),
+        totalAmount: directTotalAmount
+      };
+      const createRes = await axios.post('/api/orders', payload);
+      const newOrderCode = createRes.data.orderCode;
+
+      // 2. Immediately mark as complete to reduce stock
+      await axios.put(`/api/orders/${newOrderCode}/complete`, { paymentMethod: directPaymentMethod });
+      
+      setCompletedDirectOrderCode(newOrderCode);
+      setCart([]);
+      setDirectPaymentMethod('');
+      fetchProducts(); // refresh stock
+    } catch (error) {
+      console.error(error);
+      alert('Error completing direct sale');
+    } finally {
+      setIsCompleting(false);
+    }
+  };
 
  return (
  <div className="max-w-6xl mx-auto">
@@ -244,10 +258,14 @@ export default function POS() {
 
  <button 
  onClick={completeDirectSale}
- disabled={cart.length === 0}
- className="w-full py-4 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none"
+ disabled={cart.length === 0 || isCompleting}
+ className="w-full py-4 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none flex items-center justify-center"
  >
- Complete Sale
+ {isCompleting ? (
+ <><span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></span> Processing...</>
+ ) : (
+ 'Complete Sale'
+ )}
  </button>
  </div>
  </>
@@ -341,9 +359,14 @@ export default function POS() {
 
  <button 
  onClick={completeOnlineSale}
- className="w-full py-4 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
+ disabled={isCompleting}
+ className="w-full py-4 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 disabled:opacity-50 disabled:transform-none flex items-center justify-center"
  >
- Complete Sale
+ {isCompleting ? (
+ <><span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></span> Processing...</>
+ ) : (
+ 'Complete Sale'
+ )}
  </button>
  </>
  ) : (
