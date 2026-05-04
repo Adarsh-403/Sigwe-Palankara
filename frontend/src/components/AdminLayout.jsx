@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Outlet, Link, useLocation, Navigate } from 'react-router-dom';
 import { LayoutDashboard, Package, ShoppingCart, BarChart3, ClipboardList, Menu, X } from 'lucide-react';
 import { useSelector } from 'react-redux';
-import ThemeToggle from './ThemeToggle';
 
 const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -34,7 +33,7 @@ const AdminLayout = () => {
   const navItems = allNavItems.filter(item => item.roles.includes(user.role));
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
+    <div className="flex h-screen overflow-hidden bg-gray-50">
       {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div 
@@ -44,10 +43,12 @@ const AdminLayout = () => {
       )}
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-30 w-64 bg-white dark:bg-gray-800 shadow-xl border-r border-gray-200 dark:border-gray-700 flex flex-col transition-transform duration-300 md:static md:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="h-16 flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-700 bg-white">
-          <img src="/logo.png" alt="SIGWE Logo" className="h-10 object-contain" />
-          <button onClick={() => setIsSidebarOpen(false)} className="md:hidden text-gray-500 hover:text-gray-700">
+      <div className={`fixed inset-y-0 left-0 z-30 w-64 bg-emerald-900 shadow-xl flex flex-col transition-transform duration-300 md:static md:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="h-16 flex items-center justify-between px-4 border-b border-emerald-800 bg-emerald-900">
+          <div className="h-10 bg-white px-2 rounded-lg flex items-center justify-center">
+            <img src="/logo.png" alt="SIGWE Logo" className="h-8 object-contain" />
+          </div>
+          <button onClick={() => setIsSidebarOpen(false)} className="md:hidden text-emerald-100 hover:text-white">
             <X size={24} />
           </button>
         </div>
@@ -61,8 +62,8 @@ const AdminLayout = () => {
                 onClick={() => setIsSidebarOpen(false)}
                 className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                   isActive 
-                    ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 font-medium' 
-                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-gray-200'
+                    ? 'bg-emerald-800 text-white font-semibold' 
+                    : 'text-emerald-100 hover:bg-emerald-800/50 hover:text-white'
                 }`}
               >
                 {item.icon}
@@ -75,7 +76,7 @@ const AdminLayout = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden w-full">
-        <header className="h-16 bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-4 md:px-8 shrink-0">
+        <header className="h-16 bg-white shadow-sm border-b border-gray-100 flex items-center justify-between px-4 md:px-8 shrink-0">
           <div className="flex items-center">
             <button 
               onClick={() => setIsSidebarOpen(true)}
@@ -83,19 +84,18 @@ const AdminLayout = () => {
             >
               <Menu size={24} />
             </button>
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white truncate">
+            <h2 className="text-xl font-semibold text-gray-800 truncate">
               {navItems.find(item => item.path === location.pathname)?.name || 'Dashboard'}
             </h2>
           </div>
-          <div className="flex items-center space-x-4">
-             <ThemeToggle />
-             <Link to="/" className="text-sm font-medium text-emerald-600 hover:text-emerald-500">Go to Shop</Link>
-             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-500 to-green-500 text-white flex items-center justify-center font-bold">
+          <div className="flex items-center space-x-6">
+             <Link to="/" className="text-sm font-semibold text-emerald-600 hover:text-emerald-700">Go to Shop</Link>
+             <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200 flex items-center justify-center font-bold">
                {user?.email ? user.email.charAt(0).toUpperCase() : 'A'}
              </div>
           </div>
         </header>
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-900 p-6">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-[#f5fbf5] p-6 md:p-8">
           <Outlet />
         </main>
       </div>

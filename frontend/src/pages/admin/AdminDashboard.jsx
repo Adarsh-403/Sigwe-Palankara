@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BarChart3, TrendingUp, Users, CreditCard, AlertTriangle } from 'lucide-react';
+import { BarChart3, TrendingUp, Users, CreditCard, AlertTriangle, PieChart, Receipt, ArrowRight } from 'lucide-react';
 import axios from 'axios';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -49,86 +49,172 @@ export default function AdminDashboard() {
     return <div className="p-8 text-center text-gray-500">Loading Dashboard...</div>;
   }
 
-  const stats = [
-    { title: 'Total Revenue', value: `₹${analytics.totalSales}`, icon: <TrendingUp className="text-emerald-500" /> },
-    { title: 'Orders', value: analytics.numberOfOrders, icon: <Users className="text-green-500" /> },
-    { title: 'Sales (UPI)', value: `₹${analytics.salesByPaymentMethod.UPI}`, icon: <CreditCard className="text-emerald-500" /> },
-    { title: 'Sales (Cash)', value: `₹${analytics.salesByPaymentMethod.Cash}`, icon: <CreditCard className="text-orange-500" /> },
-  ];
+  // Calculate percentages for UPI vs Cash
+  const totalPayment = analytics.salesByPaymentMethod.UPI + analytics.salesByPaymentMethod.Cash;
+  const upiPercent = totalPayment > 0 ? Math.round((analytics.salesByPaymentMethod.UPI / totalPayment) * 100) : 0;
+  const cashPercent = totalPayment > 0 ? 100 - upiPercent : 0;
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Overview</h2>
+    <div className="space-y-8 max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex justify-between items-end border-b border-gray-200 pb-6">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Overview & Analytics</h2>
+          <p className="text-gray-500 mt-2">Today's store performance and inventory health.</p>
+        </div>
         <button 
           onClick={handleClearData}
-          className="flex items-center px-4 py-2 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-xl font-medium transition-colors border border-red-200"
+          className="flex items-center px-4 py-2 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-lg font-medium transition-colors border border-red-100"
         >
           <AlertTriangle size={18} className="mr-2" /> Clear All Data
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, idx) => (
-          <div key={idx} className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col hover:shadow-md transition-shadow">
-            <div className="flex justify-between items-start mb-4">
-              <div className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
-                {stat.icon}
+      {/* Metrics Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Metric 1: Revenue */}
+        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col justify-between group">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Revenue</p>
+              <h3 className="text-3xl font-bold text-emerald-700 mt-2">₹{analytics.totalSales.toLocaleString()}</h3>
+            </div>
+            <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+              <CreditCard size={24} />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="flex items-center text-emerald-600 text-sm font-semibold">
+              <TrendingUp size={16} className="mr-1" /> Active
+            </span>
+            <span className="text-sm text-gray-400">vs last week</span>
+          </div>
+        </div>
+
+        {/* Metric 2: Orders */}
+        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col justify-between group">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Number of Orders</p>
+              <h3 className="text-3xl font-bold text-emerald-700 mt-2">{analytics.numberOfOrders}</h3>
+            </div>
+            <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+              <Receipt size={24} />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="flex items-center text-emerald-600 text-sm font-semibold">
+              <TrendingUp size={16} className="mr-1" /> Active
+            </span>
+            <span className="text-sm text-gray-400">vs last week</span>
+          </div>
+        </div>
+
+        {/* Metric 3: Payment Breakdown */}
+        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col justify-between group">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Payment Breakdown</p>
+              <h3 className="text-xl font-bold text-gray-800 mt-2">UPI vs Cash</h3>
+            </div>
+            <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+              <PieChart size={24} />
+            </div>
+          </div>
+          <div className="flex items-center gap-6 mt-auto">
+            <div className="flex-1">
+              <div className="flex justify-between text-sm mb-1">
+                <span className="text-gray-800 font-medium">UPI</span>
+                <span className="text-emerald-600 font-bold">{upiPercent}%</span>
+              </div>
+              <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                <div className="bg-emerald-500 h-full" style={{ width: `${upiPercent}%` }}></div>
               </div>
             </div>
-            <h3 className="text-gray-500 dark:text-gray-400 text-sm font-medium mb-1">{stat.title}</h3>
-            <span className="text-2xl font-bold text-gray-900 dark:text-white">{stat.value}</span>
+            <div className="flex-1">
+              <div className="flex justify-between text-sm mb-1">
+                <span className="text-gray-500">Cash</span>
+                <span className="text-gray-500 font-medium">{cashPercent}%</span>
+              </div>
+              <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                <div className="bg-gray-300 h-full" style={{ width: `${cashPercent}%` }}></div>
+              </div>
+            </div>
           </div>
-        ))}
+        </div>
       </div>
 
+      {/* Charts & Lists Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Revenue Overview</h3>
-            <select className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-sm rounded-lg px-3 py-1">
+        
+        {/* Revenue Trends */}
+        <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)]">
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-lg font-bold text-gray-900">Revenue Trends</h3>
+            <select className="bg-gray-50 border border-gray-200 text-sm rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
               <option>This Week</option>
+              <option>Last Week</option>
               <option>This Month</option>
             </select>
           </div>
-          <div className="h-72 w-full">
+          <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorSales" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#059669" stopOpacity={0.2}/>
+                    <stop offset="95%" stopColor="#059669" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" className="dark:stroke-gray-700" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#9ca3af', fontSize: 12}} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{fill: '#9ca3af', fontSize: 12}} />
                 <Tooltip 
-                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                  contentStyle={{ borderRadius: '12px', border: '1px solid #f3f4f6', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}
                 />
-                <Area type="monotone" dataKey="sales" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorSales)" />
+                <Area type="monotone" dataKey="sales" stroke="#059669" strokeWidth={3} fillOpacity={1} fill="url(#colorSales)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Top Products Sold</h3>
-          <div className="space-y-4">
-            {analytics.mostSoldProducts.length === 0 ? (
-              <p className="text-sm text-gray-500">No products sold yet.</p>
-            ) : analytics.mostSoldProducts.map((item, idx) => (
-              <div key={idx} className="flex items-center space-x-4 p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded-xl transition-colors">
-                <div className="flex-1">
-                  <h4 className="text-sm font-semibold text-gray-900 dark:text-white">{item.name}</h4>
-                </div>
-                <span className="font-bold text-gray-900 dark:text-white">{item.quantity} sold</span>
+        {/* Top Products List */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] flex flex-col overflow-hidden">
+          <div className="p-6 border-b border-gray-100">
+            <h3 className="text-lg font-bold text-gray-900">Top Products</h3>
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            <div className="w-full">
+              <div className="flex px-6 py-3 bg-gray-50 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                <div className="flex-1">Product</div>
+                <div className="w-16 text-right">Sold</div>
               </div>
-            ))}
+              
+              {analytics.mostSoldProducts.length === 0 ? (
+                <div className="p-6 text-center text-sm text-gray-500">No products sold yet.</div>
+              ) : (
+                analytics.mostSoldProducts.map((item, idx) => (
+                  <div key={idx} className="flex px-6 py-4 border-b border-gray-50 hover:bg-emerald-50/30 transition-colors items-center">
+                    <div className="flex-1 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                        {item.name.charAt(0).toUpperCase()}
+                      </div>
+                      <span className="text-sm font-semibold text-gray-800 truncate">{item.name}</span>
+                    </div>
+                    <div className="w-16 text-right text-sm text-gray-500 font-medium">{item.quantity}</div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+          <div className="p-4 border-t border-gray-100 bg-gray-50 text-center">
+            <button className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 flex items-center justify-center gap-1 mx-auto">
+              View All Products <ArrowRight size={16} />
+            </button>
           </div>
         </div>
-      </div>
 
+      </div>
     </div>
   );
 }
