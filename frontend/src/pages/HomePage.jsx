@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, BarChart2, Zap, Leaf, ArrowRight, TreePine, Sprout, Wind, LogIn } from 'lucide-react';
+import { ShoppingBag, BarChart2, Zap, Shield, Leaf, ArrowRight, TreePine, Sprout, Wind, LogIn } from 'lucide-react';
 
 // Animated floating leaf component
 function FloatingLeaf({ style, delay = 0 }) {
