@@ -7,6 +7,7 @@ export default function ProductManagement() {
  const [isModalOpen, setIsModalOpen] = useState(false);
  const [editingProduct, setEditingProduct] = useState(null);
  const [formData, setFormData] = useState({ name: '', price: '', stock: '', image: '' });
+  const [loading, setLoading] = useState(true);
 
  useEffect(() => {
  fetchProducts();
