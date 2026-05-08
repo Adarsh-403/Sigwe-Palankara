@@ -14,40 +14,63 @@ const data = [
 ];
 
 export default function AdminDashboard() {
- const [analytics, setAnalytics] = useState(null);
- const [loading, setLoading] = useState(true);
+  const [analytics, setAnalytics] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
- useEffect(() => {
- fetchAnalytics();
- }, []);
+  useEffect(() => {
+    fetchAnalytics();
+  }, []);
 
- const fetchAnalytics = async () => {
- try {
- const res = await axios.get('/api/analytics/summary');
- setAnalytics(res.data);
- } catch (error) {
- console.error('Error fetching analytics:', error);
- } finally {
- setLoading(false);
- }
- };
+  const fetchAnalytics = async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      const res = await axios.get('/api/analytics/summary');
+      setAnalytics(res.data);
+    } catch (err) {
+      console.error('Error fetching analytics:', err);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
- const handleClearData = async () => {
- const confirmed = window.confirm("WARNING: You are about to permanently delete all Sales Orders and Products. All reports will be wiped and reset to zero. This action cannot be undone.\n\nAre you absolutely sure?");
- if (!confirmed) return;
+  const handleClearData = async () => {
+    const confirmed = window.confirm("WARNING: You are about to permanently delete all Sales Orders and Products. All reports will be wiped and reset to zero. This action cannot be undone.\n\nAre you absolutely sure?");
+    if (!confirmed) return;
 
- try {
- await axios.delete('/api/analytics/clear');
- alert("All data has been successfully cleared. Starting fresh.");
- fetchAnalytics();
- } catch (error) {
- alert("Failed to clear data.");
- }
- };
+    try {
+      await axios.delete('/api/analytics/clear');
+      alert("All data has been successfully cleared. Starting fresh.");
+      fetchAnalytics();
+    } catch (error) {
+      alert("Failed to clear data.");
+    }
+  };
 
- if (loading || !analytics) {
- return <div className="p-8 text-center text-gray-500">Loading Dashboard...</div>;
- }
+  if (loading) {
+    return (
+      <div className="p-8 flex flex-col items-center justify-center gap-4 min-h-[300px]">
+        <div className="w-10 h-10 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
+        <p className="text-gray-500 text-sm">Loading dashboard… (first load may take a moment)</p>
+      </div>
+    );
+  }
+
+  if (error || !analytics) {
+    return (
+      <div className="p-8 flex flex-col items-center justify-center gap-4 min-h-[300px]">
+        <p className="text-gray-500">Could not load analytics. The server may be waking up.</p>
+        <button
+          onClick={fetchAnalytics}
+          className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
  // Calculate percentages for UPI vs Cash
  const totalPayment = analytics.salesByPaymentMethod.UPI + analytics.salesByPaymentMethod.Cash;
