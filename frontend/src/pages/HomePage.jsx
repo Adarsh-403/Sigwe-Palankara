@@ -62,10 +62,10 @@ function StatCard({ value, suffix, label }) {
   const [count, ref] = useCounter(value);
   return (
     <div ref={ref} className="text-center">
-      <div className="text-4xl md:text-5xl font-bold text-emerald-700 font-heading">
+      <div className="text-4xl md:text-5xl font-bold text-white font-heading">
         {count.toLocaleString()}{suffix}
       </div>
-      <div className="text-gray-500 mt-1 text-sm">{label}</div>
+      <div className="text-emerald-200 mt-1 text-sm">{label}</div>
     </div>
   );
 }
@@ -259,13 +259,13 @@ export default function HomePage() {
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 50%, white 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 gap-10">
           {[
-            { value: 500, suffix: '+', label: 'Products Managed' },
-            { value: 1200, suffix: '+', label: 'Orders Processed' },
-            { value: 98, suffix: '%', label: 'Uptime Reliability' },
-            { value: 3, suffix: 'x', label: 'Faster Checkout' },
+            { value: 500,  suffix: '+', label: 'Products Managed'  },
+            { value: 1200, suffix: '+', label: 'Orders Processed'  },
+            { value: 98,   suffix: '%', label: 'Uptime Reliability' },
+            { value: 3,    suffix: 'x', label: 'Faster Checkout'   },
           ].map((s) => (
             <div key={s.label} className="text-center">
-              <StatCard value={s.value} suffix={s.suffix} label={<span className="text-emerald-200">{s.label}</span>} />
+              <StatCard value={s.value} suffix={s.suffix} label={s.label} />
             </div>
           ))}
         </div>
