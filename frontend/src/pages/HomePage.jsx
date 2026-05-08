@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, BarChart2, Zap, Shield, Leaf, ArrowRight, TreePine, Sprout, Wind } from 'lucide-react';
+import { ShoppingBag, BarChart2, Zap, Leaf, ArrowRight, TreePine, Sprout, Wind, LogIn } from 'lucide-react';
 
 // Animated floating leaf component
 function FloatingLeaf({ style, delay = 0 }) {
@@ -8,14 +8,22 @@ function FloatingLeaf({ style, delay = 0 }) {
     <div
       className="absolute pointer-events-none select-none"
       style={{
-        ...style,
-        animation: `leafFloat ${6 + Math.random() * 4}s ease-in-out infinite`,
+        top: style.top,
+        left: style.left,
+        right: style.right,
+        '--r': style.rotate || '0deg',
+        animation: `leafFloat ${7 + (delay % 4)}s ease-in-out infinite`,
         animationDelay: `${delay}s`,
+        filter: 'drop-shadow(0 2px 6px rgba(45,90,39,0.25))',
       }}
     >
-      <svg viewBox="0 0 40 50" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: style.size || 32, height: style.size || 40 }}>
-        <path d="M20 48 C20 48 2 30 5 15 C8 2 20 2 20 2 C20 2 32 2 35 15 C38 30 20 48 20 48Z" fill={style.color || 'rgba(45,90,39,0.12)'} />
-        <path d="M20 2 L20 48" stroke={style.stroke || 'rgba(45,90,39,0.2)'} strokeWidth="1" strokeLinecap="round" />
+      <svg viewBox="0 0 40 54" fill="none" xmlns="http://www.w3.org/2000/svg"
+        style={{ width: style.size || 32, height: (style.size || 32) * 1.35, transform: `rotate(${style.rotate || '0deg'})` }}>
+        <path d="M20 52 C20 52 1 32 4 14 C7 1 20 1 20 1 C20 1 33 1 36 14 C39 32 20 52 20 52Z"
+          fill={style.color || '#4CAF50'} />
+        <path d="M20 1 L20 52" stroke={style.stroke || '#2D5A27'} strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M20 20 Q28 15 34 18" stroke={style.stroke || '#2D5A27'} strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
+        <path d="M20 30 Q12 25 6 28" stroke={style.stroke || '#2D5A27'} strokeWidth="0.8" strokeLinecap="round" opacity="0.6" />
       </svg>
     </div>
   );
@@ -82,14 +90,16 @@ export default function HomePage() {
   }, []);
 
   const leaves = [
-    { top: '8%', left: '-2%', size: 48, color: 'rgba(45,90,39,0.1)', stroke: 'rgba(45,90,39,0.18)', rotate: '20deg' },
-    { top: '20%', left: '3%', size: 28, color: 'rgba(76,175,80,0.12)', stroke: 'rgba(76,175,80,0.2)', rotate: '-10deg' },
-    { top: '55%', left: '-1%', size: 38, color: 'rgba(45,90,39,0.08)', stroke: 'rgba(45,90,39,0.15)', rotate: '35deg' },
-    { top: '5%', right: '2%', size: 52, color: 'rgba(45,90,39,0.1)', stroke: 'rgba(45,90,39,0.18)', rotate: '-25deg' },
-    { top: '30%', right: '-1%', size: 32, color: 'rgba(76,175,80,0.1)', stroke: 'rgba(76,175,80,0.18)', rotate: '15deg' },
-    { top: '70%', right: '1%', size: 44, color: 'rgba(45,90,39,0.08)', stroke: 'rgba(45,90,39,0.12)', rotate: '-40deg' },
-    { top: '85%', left: '5%', size: 26, color: 'rgba(76,175,80,0.1)', stroke: 'rgba(76,175,80,0.15)', rotate: '50deg' },
-    { top: '90%', right: '4%', size: 30, color: 'rgba(45,90,39,0.09)', stroke: 'rgba(45,90,39,0.16)', rotate: '-15deg' },
+    { top: '8%',  left: '-1%',  size: 56, color: '#4CAF50',           stroke: '#2D5A27', rotate: '20deg'  },
+    { top: '20%', left: '2%',   size: 36, color: '#66BB6A',           stroke: '#388E3C', rotate: '-10deg' },
+    { top: '42%', left: '-1%',  size: 44, color: '#43A047',           stroke: '#2D5A27', rotate: '35deg'  },
+    { top: '65%', left: '3%',   size: 30, color: '#81C784',           stroke: '#4CAF50', rotate: '-20deg' },
+    { top: '5%',  right: '1%',  size: 60, color: '#4CAF50',           stroke: '#2D5A27', rotate: '-25deg' },
+    { top: '28%', right: '0%',  size: 38, color: '#66BB6A',           stroke: '#388E3C', rotate: '15deg'  },
+    { top: '55%', right: '2%',  size: 48, color: '#43A047',           stroke: '#2D5A27', rotate: '-40deg' },
+    { top: '80%', left: '4%',   size: 32, color: '#81C784',           stroke: '#4CAF50', rotate: '50deg'  },
+    { top: '88%', right: '3%',  size: 36, color: '#4CAF50',           stroke: '#2D5A27', rotate: '-15deg' },
+    { top: '50%', left: '45%',  size: 24, color: 'rgba(76,175,80,0.35)', stroke: '#4CAF50', rotate: '60deg'  },
   ];
 
   return (
@@ -150,7 +160,7 @@ export default function HomePage() {
               to="/login"
               className="flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-all duration-200 shadow-sm hover:shadow-emerald-200 hover:shadow-md"
             >
-              Admin Login <ArrowRight size={15} />
+              <LogIn size={15} /> Login
             </Link>
           </div>
         </div>
@@ -229,8 +239,8 @@ export default function HomePage() {
               to="/login"
               className="flex items-center gap-2 bg-white border border-emerald-200 hover:border-emerald-400 text-emerald-700 font-bold px-8 py-4 rounded-2xl text-base transition-all duration-200 hover:-translate-y-0.5"
             >
-              <Shield size={18} />
-              Admin Access
+              <LogIn size={18} />
+              Login
             </Link>
           </div>
 
@@ -389,7 +399,7 @@ export default function HomePage() {
             Ready to grow your store?
           </h2>
           <p className="text-emerald-200 text-lg mb-10">
-            Sign in to the admin panel to manage your inventory, run POS, and view real-time analytics.
+            Sign in to manage your inventory, run POS, and view analytics — your access level is determined by your account.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -402,7 +412,7 @@ export default function HomePage() {
               to="/login"
               className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-400 font-bold px-8 py-4 rounded-2xl transition-all duration-200 hover:-translate-y-0.5"
             >
-              <Shield size={20} /> Admin Sign In
+              <LogIn size={20} /> Sign In
             </Link>
           </div>
         </div>
@@ -421,7 +431,7 @@ export default function HomePage() {
             </div>
             <div className="flex items-center gap-6 text-sm">
               <Link to="/shop" className="hover:text-emerald-400 transition-colors">Shop</Link>
-              <Link to="/login" className="hover:text-emerald-400 transition-colors">Admin Login</Link>
+              <Link to="/login" className="hover:text-emerald-400 transition-colors">Login</Link>
               <a href="https://sigwe.in" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">sigwe.in ↗</a>
             </div>
             <div className="text-xs text-gray-600">
