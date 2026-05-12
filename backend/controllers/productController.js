@@ -13,8 +13,8 @@ export const getProducts = async (req, res) => {
 // Create product
 export const createProduct = async (req, res) => {
   try {
-    const { name, price, image, stock } = req.body;
-    const product = new Product({ name, price, image, stock });
+    const { name, price, image, stock, category } = req.body;
+    const product = new Product({ name, price, image, stock, category: category || 'all' });
     await product.save();
     res.status(201).json(product);
   } catch (error) {

@@ -90,16 +90,16 @@ export default function HomePage() {
   }, []);
 
   const leaves = [
-    { top: '8%',  left: '-1%',  size: 56, color: '#4CAF50',           stroke: '#2D5A27', rotate: '20deg'  },
-    { top: '20%', left: '2%',   size: 36, color: '#66BB6A',           stroke: '#388E3C', rotate: '-10deg' },
-    { top: '42%', left: '-1%',  size: 44, color: '#43A047',           stroke: '#2D5A27', rotate: '35deg'  },
-    { top: '65%', left: '3%',   size: 30, color: '#81C784',           stroke: '#4CAF50', rotate: '-20deg' },
-    { top: '5%',  right: '1%',  size: 60, color: '#4CAF50',           stroke: '#2D5A27', rotate: '-25deg' },
-    { top: '28%', right: '0%',  size: 38, color: '#66BB6A',           stroke: '#388E3C', rotate: '15deg'  },
-    { top: '55%', right: '2%',  size: 48, color: '#43A047',           stroke: '#2D5A27', rotate: '-40deg' },
-    { top: '80%', left: '4%',   size: 32, color: '#81C784',           stroke: '#4CAF50', rotate: '50deg'  },
-    { top: '88%', right: '3%',  size: 36, color: '#4CAF50',           stroke: '#2D5A27', rotate: '-15deg' },
-    { top: '50%', left: '45%',  size: 24, color: 'rgba(76,175,80,0.35)', stroke: '#4CAF50', rotate: '60deg'  },
+    { top: '8%', left: '-1%', size: 56, color: '#4CAF50', stroke: '#2D5A27', rotate: '20deg' },
+    { top: '20%', left: '2%', size: 36, color: '#66BB6A', stroke: '#388E3C', rotate: '-10deg' },
+    { top: '42%', left: '-1%', size: 44, color: '#43A047', stroke: '#2D5A27', rotate: '35deg' },
+    { top: '65%', left: '3%', size: 30, color: '#81C784', stroke: '#4CAF50', rotate: '-20deg' },
+    { top: '5%', right: '1%', size: 60, color: '#4CAF50', stroke: '#2D5A27', rotate: '-25deg' },
+    { top: '28%', right: '0%', size: 38, color: '#66BB6A', stroke: '#388E3C', rotate: '15deg' },
+    { top: '55%', right: '2%', size: 48, color: '#43A047', stroke: '#2D5A27', rotate: '-40deg' },
+    { top: '80%', left: '4%', size: 32, color: '#81C784', stroke: '#4CAF50', rotate: '50deg' },
+    { top: '88%', right: '3%', size: 36, color: '#4CAF50', stroke: '#2D5A27', rotate: '-15deg' },
+    { top: '50%', left: '45%', size: 24, color: 'rgba(76,175,80,0.35)', stroke: '#4CAF50', rotate: '60deg' },
   ];
 
   return (
@@ -259,10 +259,10 @@ export default function HomePage() {
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 50%, white 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 grid grid-cols-2 md:grid-cols-4 gap-10">
           {[
-            { value: 500,  suffix: '+', label: 'Products Managed'  },
-            { value: 1200, suffix: '+', label: 'Orders Processed'  },
-            { value: 98,   suffix: '%', label: 'Uptime Reliability' },
-            { value: 3,    suffix: 'x', label: 'Faster Checkout'   },
+            { value: 500, suffix: '+', label: 'Products Managed' },
+            { value: 1200, suffix: '+', label: 'Orders Processed' },
+            { value: 98, suffix: '%', label: 'Uptime Reliability' },
+            { value: 3, suffix: 'x', label: 'Faster Checkout' },
           ].map((s) => (
             <div key={s.label} className="text-center">
               <StatCard value={s.value} suffix={s.suffix} label={s.label} />
@@ -275,7 +275,7 @@ export default function HomePage() {
       <section className="py-24 bg-[#f5fbf5] relative">
         {/* Leaf border decoration */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-emerald-300 to-transparent opacity-40" />
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 text-emerald-600 text-xs font-bold uppercase tracking-widest mb-4">

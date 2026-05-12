@@ -2,12 +2,29 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Search, X } from 'lucide-react';
 import axios from 'axios';
 
+const CATEGORIES = [
+  { id: 'all',           label: 'All Spices'     },
+  { id: 'curry-powders', label: 'Curry Powders'  },
+  { id: 'whole-spices',  label: 'Whole Spices'   },
+  { id: 'masala-blends', label: 'Masala Blends'  },
+  { id: 'pepper',        label: 'Pepper'         },
+  { id: 'cardamom',      label: 'Cardamom'       },
+  { id: 'turmeric',      label: 'Turmeric'       },
+];
+
+const EMPTY_FORM = { name: '', price: '', stock: '', image: '', category: '' };
+
+function getCategoryLabel(id) {
+  const cat = CATEGORIES.find(c => c.id === id);
+  return cat ? cat.label : '—';
+}
+
 export default function ProductManagement() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  const [formData, setFormData] = useState({ name: '', price: '', stock: '', image: '' });
+  const [formData, setFormData] = useState(EMPTY_FORM);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -29,10 +46,16 @@ export default function ProductManagement() {
   const openModal = (product = null) => {
     if (product) {
       setEditingProduct(product);
-      setFormData({ name: product.name, price: product.price, stock: product.stock, image: product.image || '' });
+      setFormData({
+        name: product.name,
+        price: product.price,
+        stock: product.stock,
+        image: product.image || '',
+        category: product.category || '',
+      });
     } else {
       setEditingProduct(null);
-      setFormData({ name: '', price: '', stock: '', image: '' });
+      setFormData(EMPTY_FORM);
     }
     setIsModalOpen(true);
   };
@@ -40,16 +63,18 @@ export default function ProductManagement() {
   const closeModal = () => {
     setIsModalOpen(false);
     setEditingProduct(null);
-    setFormData({ name: '', price: '', stock: '', image: '' });
+    setFormData(EMPTY_FORM);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // If no category selected, send 'all' so it always appears under All Spices
+      const payload = { ...formData, category: formData.category || 'all' };
       if (editingProduct) {
-        await axios.put(`/api/products/${editingProduct._id}`, formData);
+        await axios.put(`/api/products/${editingProduct._id}`, payload);
       } else {
-        await axios.post('/api/products', formData);
+        await axios.post('/api/products', payload);
       }
       fetchProducts();
       closeModal();
@@ -118,6 +143,7 @@ export default function ProductManagement() {
             <thead>
               <tr className="bg-gray-50">
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Product</th>
+                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Price</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Stock</th>
                 <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
@@ -126,7 +152,7 @@ export default function ProductManagement() {
             <tbody className="divide-y divide-gray-100">
               {loading ? (
                 <tr>
-                  <td colSpan="4" className="py-12 text-center">
+                  <td colSpan="5" className="py-12 text-center">
                     <div className="flex flex-col items-center justify-center gap-3">
                       <div className="w-8 h-8 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin" />
                       <span className="text-sm text-gray-500">Loading products...</span>
@@ -135,7 +161,7 @@ export default function ProductManagement() {
                 </tr>
               ) : filtered.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="py-8 text-center text-gray-500 text-sm">
+                  <td colSpan="5" className="py-8 text-center text-gray-500 text-sm">
                     {searchQuery ? 'No products match your search.' : 'No products found. Add some!'}
                   </td>
                 </tr>
@@ -143,15 +169,34 @@ export default function ProductManagement() {
                 <tr key={product._id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0">
+                      <div
+                        className="w-12 h-12 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0"
+                        style={{
+                          background: product.image
+                            ? '#f3f4f6'
+                            : 'linear-gradient(135deg, #EAF4E8, #C0DD97)',
+                        }}
+                      >
                         {product.image ? (
                           <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
                         ) : (
-                          <span className="text-gray-400 text-xs">No Image</span>
+                          <span className="text-xs" style={{ color: '#639922' }}>🌿</span>
                         )}
                       </div>
                       <span className="font-medium text-gray-900">{product.name}</span>
                     </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span
+                      className="px-2 py-1 rounded-md text-xs font-semibold"
+                      style={{
+                        background: product.category && product.category !== 'all' ? '#EAF4E8' : '#F5F5F3',
+                        color: product.category && product.category !== 'all' ? '#27500A' : '#9CA3AF',
+                        border: `1px solid ${product.category && product.category !== 'all' ? '#C0DD97' : '#E5E7EB'}`,
+                      }}
+                    >
+                      {getCategoryLabel(product.category || 'all')}
+                    </span>
                   </td>
                   <td className="px-6 py-4 font-semibold text-gray-900">₹{product.price}</td>
                   <td className="px-6 py-4">
@@ -178,9 +223,9 @@ export default function ProductManagement() {
         </div>
       </div>
 
-      {/* Modal */}
+      {/* ── Add / Edit Product Modal ── */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center">
+        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={closeModal} />
           <div className="relative bg-white rounded-2xl shadow-xl max-w-md w-full p-6 m-4">
             <div className="flex justify-between items-center mb-4">
@@ -193,6 +238,7 @@ export default function ProductManagement() {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Product Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
                 <input
@@ -200,28 +246,54 @@ export default function ProductManagement() {
                   value={formData.name}
                   onChange={e => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  placeholder="e.g. Kerala Pepper Powder"
                 />
               </div>
+
+              {/* Category */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Category
+                  <span className="ml-1 text-xs text-gray-400 font-normal">(optional — defaults to All Spices)</span>
+                </label>
+                <select
+                  value={formData.category}
+                  onChange={e => setFormData({ ...formData, category: e.target.value })}
+                  className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm"
+                  style={{ color: formData.category ? '#111827' : '#9CA3AF' }}
+                >
+                  <option value="">— Select a category (optional) —</option>
+                  {CATEGORIES.map(cat => (
+                    <option key={cat.id} value={cat.id}>{cat.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Price + Stock */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Price (₹)</label>
                   <input
-                    type="number" required
+                    type="number" required min="0" step="0.01"
                     value={formData.price}
                     onChange={e => setFormData({ ...formData, price: e.target.value })}
                     className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    placeholder="0"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
                   <input
-                    type="number" required
+                    type="number" required min="0"
                     value={formData.stock}
                     onChange={e => setFormData({ ...formData, stock: e.target.value })}
                     className="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    placeholder="0"
                   />
                 </div>
               </div>
+
+              {/* Image Upload */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Product Image</label>
                 <div className="flex items-center space-x-4">
@@ -240,9 +312,10 @@ export default function ProductManagement() {
                   </div>
                 </div>
               </div>
+
               <button
                 type="submit"
-                className="w-full mt-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors"
+                className="w-full mt-2 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium transition-colors"
               >
                 {editingProduct ? 'Update Product' : 'Save Product'}
               </button>

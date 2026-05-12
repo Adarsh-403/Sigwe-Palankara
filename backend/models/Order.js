@@ -7,6 +7,14 @@ const orderSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    userId: {
+      type: String,
+      default: null,
+    },
+    userEmail: {
+      type: String,
+      default: null,
+    },
     items: [
       {
         productId: {
@@ -33,7 +41,7 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['Pending', 'Completed'],
+      enum: ['Pending', 'Completed', 'Delivered'],
       default: 'Pending',
     },
     paymentMethod: {

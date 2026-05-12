@@ -1,5 +1,15 @@
 import mongoose from 'mongoose';
 
+const CATEGORIES = [
+  'all',
+  'curry-powders',
+  'whole-spices',
+  'masala-blends',
+  'pepper',
+  'cardamom',
+  'turmeric',
+];
+
 const productSchema = new mongoose.Schema(
   {
     name: {
@@ -17,6 +27,11 @@ const productSchema = new mongoose.Schema(
     stock: {
       type: Number,
       default: 0,
+    },
+    category: {
+      type: String,
+      enum: CATEGORIES,
+      default: 'all',
     },
   },
   { timestamps: true }
