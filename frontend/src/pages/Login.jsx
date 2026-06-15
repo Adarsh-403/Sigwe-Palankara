@@ -54,12 +54,12 @@ export default function Login() {
  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
  const userRole = getRole(email);
  dispatch(setUser({ uid: userCredential.user.uid, email: userCredential.user.email, role: userRole }));
- navigate(userRole === 'admin' || userRole === 'sales' ? '/admin' : '/');
+ navigate('/shop');
  } else {
  const userCredential = await signInWithEmailAndPassword(auth, email, password);
  const userRole = getRole(email);
  dispatch(setUser({ uid: userCredential.user.uid, email: userCredential.user.email, role: userRole }));
- navigate(userRole === 'admin' || userRole === 'sales' ? '/admin' : '/');
+ navigate('/shop');
  }
  } catch (err) {
  console.error(err);
@@ -77,7 +77,7 @@ export default function Login() {
  const email = userCredential.user.email;
  const userRole = getRole(email);
  dispatch(setUser({ uid: userCredential.user.uid, email, role: userRole }));
- navigate(userRole === 'admin' || userRole === 'sales' ? '/admin' : '/');
+ navigate('/shop');
  } catch (err) {
  console.error(err);
  setError(err.message || 'Google sign in failed');

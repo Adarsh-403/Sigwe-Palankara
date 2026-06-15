@@ -7,13 +7,8 @@ import { setUser } from './store/authSlice';
 
 import HomePage from './pages/HomePage';
 import UserPanel from './pages/UserPanel';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import ProductManagement from './pages/admin/ProductManagement';
-import POS from './pages/admin/POS';
-import OrderManagement from './pages/admin/OrderManagement';
-import Analytics from './pages/admin/Analytics';
 import Login from './pages/Login';
-import AdminLayout from './components/AdminLayout';
+import Orders from './pages/Orders';
 
 function App() {
   const dispatch = useDispatch();
@@ -55,14 +50,8 @@ function App() {
         {/* Login */}
         <Route path="/login" element={<Login />} />
 
-        {/* Admin Routes (protected) */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="products" element={<ProductManagement />} />
-          <Route path="pos" element={<POS />} />
-          <Route path="orders" element={<OrderManagement />} />
-          <Route path="analytics" element={<Analytics />} />
-        </Route>
+        {/* Orders History */}
+        <Route path="/orders" element={<Orders />} />
       </Routes>
     </div>
   );
