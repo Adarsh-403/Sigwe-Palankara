@@ -1,9 +1,10 @@
 import express from 'express';
-import { getAnalyticsSummary, clearAllData } from '../controllers/analyticsController.js';
+import { getAnalyticsSummary } from '../controllers/analyticsController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/summary', getAnalyticsSummary);
-router.delete('/clear', clearAllData);
+router.route('/')
+  .get(protect, getAnalyticsSummary);
 
 export default router;

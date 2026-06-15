@@ -1,11 +1,18 @@
 import express from 'express';
-import { getProducts, createProduct, updateProduct, deleteProduct } from '../controllers/productController.js';
+import {
+  getProducts,
+  createProduct,
+  updateProductStock,
+} from '../controllers/productController.js';
+import { protect, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/', getProducts);
-router.post('/', createProduct);
-router.put('/:id', updateProduct);
-router.delete('/:id', deleteProduct);
+router.route('/')
+  .get(protect, getProducts)
+  .post(protect, authorize('SuperAdmin'), createProduct);
+
+router.route('/:id/stock')
+  .put(protect, authorize('WarehouseManager', 'SuperAdmin'), updateProductStock);
 
 export default router;
